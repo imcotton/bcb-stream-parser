@@ -1,0 +1,45 @@
+{
+  "name": "bcb-stream-parser",
+  "version": "0.1.0",
+  "description": "Parse BitCoin-Block via NodeJS.ReadableStream",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "prepublishOnly": "mv ./dist/* ./",
+    "build": "tsc && rollup -c",
+    "ver": "echo ${npm_package_name}@${npm_package_version}",
+    "test": "jest --ci --coverage"
+  },
+  "keywords": [
+    "bitcoin",
+    "blockchain",
+    "parser",
+    "stream"
+  ],
+  "author": "Cotton Hou <himcotton@gmail.com>",
+  "repository": "imcotton/bcb-stream-parser",
+  "homepage": "https://github.com/imcotton/bcb-stream-parser#readme",
+  "bugs": {
+    "url": "https://github.com/imcotton/bcb-stream-parser/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "async-readable": "^0.1.4",
+    "proxy-bind": "^1.1.0",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.8",
+    "@types/ramda": "^0.26.16",
+    "jest": "^24.8.0",
+    "jest-junit": "^6.4.0",
+    "rollup": "^1.16.7",
+    "ts-jest": "^24.0.2",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.3",
+    "utility-types": "^3.7.0"
+  }
+}
