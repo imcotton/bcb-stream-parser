@@ -16,8 +16,7 @@ export const path = R.compose(R.replace(/\/\/+/g, '/'), R.join('/'));
 export const dist = R.compose(path, R.prepend(OUT), R.of, R.trim);
 export const list = R.compose(R.filter(Boolean), R.split(/[,|;]|\s+/g), R.trim);
 
-export const outs = (input = '', suffix = '') => R.replace('.js', R.concat('.', suffix), input);
-export const value = R.compose(dist, R.ifElse(R.is(Function), R.call, R.identity));
+export const suffix = R.useWith(R.replace('.js'), [ R.concat('.'), R.identity ]);
 
 export const extendsBuiltin = R.compose(list, R.concat(`
     | http | https | net | crypto | stream | buffer |
@@ -26,7 +25,7 @@ export const extendsBuiltin = R.compose(list, R.concat(`
 
 
 
-export function construct (input = '', cjs = outs(input, 'cjs'), mjs = outs(input, 'mjs')) {
+export function construct (input = '', cjs = suffix('cjs', input), mjs = suffix('mjs', input)) {
 
     return {
 
@@ -36,12 +35,12 @@ export function construct (input = '', cjs = outs(input, 'cjs'), mjs = outs(inpu
 
         output: [
             {
-                file: value(cjs),
+                file: dist(cjs),
                 format: 'cjs',
                 preferConst: true,
             },
             {
-                file: value(mjs),
+                file: dist(mjs),
                 format: 'esm',
             },
         ],
