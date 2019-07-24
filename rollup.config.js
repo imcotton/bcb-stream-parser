@@ -55,6 +55,7 @@ export function construct (input = '', cjs = outs(input, 'cjs'), mjs = outs(inpu
 export default [
 
     construct('index.js', pkg.main, pkg.module),
+    construct('parser.js', 'parser.js'),
 
 ];
 
