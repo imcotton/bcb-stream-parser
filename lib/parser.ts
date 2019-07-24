@@ -4,7 +4,7 @@ import { bond } from 'proxy-bind';
 
 import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
-import { PromiseType } from 'utility-types';
+import { PromiseType, Optional } from 'utility-types';
 
 import {
     apply, complement, compose, identity, forEach,
@@ -360,7 +360,7 @@ export const reader = toReadableStream(parser);
 
 export type Parser = RT<typeof parser> extends AII<infer U> ? U : never;
 
-export async function* parser ({ read, off }: AsyncReadable) {
+export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable, 'off'>) {
 
     const header = await readHeader(read)();
 
