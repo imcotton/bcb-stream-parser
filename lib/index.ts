@@ -1,2 +1,2 @@
-export { reader, Parser } from './parser';
+export { reader, transformer, Parser } from './parser';
 
