@@ -27,6 +27,7 @@
   "license": "MIT",
   "dependencies": {
     "async-readable": "^0.1.4",
+    "buffer-pond": "^0.6.0",
     "proxy-bind": "^1.1.0",
     "ramda": "~0.26.1"
   },

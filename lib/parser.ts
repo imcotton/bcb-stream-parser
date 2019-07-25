@@ -2,6 +2,7 @@
 
 import { bond } from 'proxy-bind';
 
+import { toTransform } from 'buffer-pond';
 import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
 import { PromiseType, Optional } from 'utility-types';
@@ -356,6 +357,7 @@ export function readHeader (read: Read) {
 
 
 
+export const transformer = toTransform(parser);
 export const reader = toReadableStream(parser);
 
 export type Parser = RT<typeof parser> extends AII<infer U> ? U : never;
