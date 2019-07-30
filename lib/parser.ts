@@ -1,5 +1,7 @@
 /// <reference lib="es2018.asynciterable" />
 
+import BN from 'bn.js';
+
 import { bond } from 'proxy-bind';
 
 import { toTransform } from 'buffer-pond';
@@ -36,7 +38,7 @@ export function readCompactSize (read: Read) {
         switch (size) {
         case 0xFD: return (await read(2)).readUInt16LE(0);
         case 0xFE: return (await read(4)).readUInt32LE(0);
-        case 0xFF: return Number((await read(8)).readBigUInt64LE(0));
+        case 0xFF: return new BN(await read(8), 'le').toNumber();
         default: return size;
         }
 
@@ -99,7 +101,7 @@ export function readOutput (read: Read) {
 
     return async function () {
 
-        const value = '0x' + (await read(8)).readBigUInt64LE().toString(16);
+        const value = '0x' + new BN(await read(8), 'le').toString(16);
         const script = await verStrThunk();
 
         return {
