@@ -328,10 +328,12 @@ export function readHeader (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
 
-    return async function () {
+    return async function (readTxCount = true) {
 
         const chunk = await read(80);
         const { readUInt32LE, slice } = bond(chunk);
+
+        const hash = blockHash(chunk);
 
         const p = pointer(0);
 
@@ -348,9 +350,8 @@ export function readHeader (read: Read) {
             bits: uint32LE(),
             nonce: uint32LE(),
 
-            hash: blockHash(chunk),
-
-            txCount: await compactSizeThunk(),
+            hash,
+            txCount: readTxCount ? await compactSizeThunk() : 0,
         };
 
     };
