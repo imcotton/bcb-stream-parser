@@ -31,7 +31,7 @@ export function construct (input = '', cjs = suffix('cjs', input), mjs = suffix(
 
         input: dist(input),
 
-        external: extendsBuiltin(' ramda | proxy-bind | async-readable | buffer-pond '),
+        external: extendsBuiltin(' ramda | proxy-bind | async-readable | buffer-pond | bn.js'),
 
         output: [
             {
