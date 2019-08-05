@@ -75,6 +75,6 @@ export function blockHash (content: Buffer) {
 
 
 export function reverseBuffer (buffer: Buffer) {
-    return buffer.reverse();
+    return buffer.reverse() as Buffer;
 }
 
