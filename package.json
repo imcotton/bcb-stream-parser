@@ -26,7 +26,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "async-readable": "~0.2.0-2",
+    "async-readable": "~0.2.0-3",
     "bn.js": "^5.0.0",
     "buffer-pond": "~0.7.0-1",
     "proxy-bind": "^1.1.0",
