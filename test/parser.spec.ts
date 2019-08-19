@@ -5,7 +5,7 @@ import { bufferPond } from "buffer-pond";
 
 import { h2b, h2r, toASM, reverseID } from './helpers';
 
-import { readHeader, readTransaction } from '../lib/parser';
+import { readHeader, readTransaction, parseCoinbase } from '../lib/parser';
 
 import txFixtures from './fixtures/transaction.json';
 import blockFixtures from './fixtures/block.json';
@@ -27,6 +27,41 @@ describe('readHeader', () => {
             const { hash } = await readHeader(read)(false);
 
             expect(hash).toEqual(id);
+
+        });
+
+    }
+
+});
+
+
+
+describe('coinbase', () => {
+
+    const sum = R.compose(
+        R.sum,
+        R.pluck('value') as (list: Array<{ value: number }>) => number[],
+    );
+
+    const samples = R.filter(R.propEq('coinbase', true));
+
+    for (const { hex, description, raw } of samples(txFixtures.valid)) {
+
+        test(description, async () => {
+
+            const source = h2r(hex);
+            const { read } = asyncReadable(source);
+
+            const tx = await readTransaction(read)();
+            const coinbase = parseCoinbase(tx);
+
+            expect(coinbase).not.toBeUndefined();
+
+            const value = sum(raw.outs);
+
+            if (coinbase) {
+                expect(coinbase.value.substr(2)).toEqual(value.toString(16));
+            }
 
         });
 
