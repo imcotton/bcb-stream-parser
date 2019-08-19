@@ -47,7 +47,7 @@ describe('transaction', () => {
 
     for (const { id, hex, whex, description, raw, weight } of samples(txFixtures.valid)) {
 
-        test(description + id, async () => {
+        test(description, async () => {
 
             const source = h2r(whex || hex);
 
