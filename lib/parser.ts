@@ -9,14 +9,11 @@ import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
 import { PromiseType, Optional } from 'utility-types';
 
-import {
-    apply, complement, compose, identity, forEach,
-    head, isEmpty, not, tap, thunkify, times,
-} from 'ramda';
+import { apply, compose, identity, head, not, thunkify } from 'ramda';
 
 import {
     thunkLooping, mapIter, toHex, copy,
-    blockHash, reverseBuffer,
+    blockHash, reverseBuffer, bufferCounter,
 } from './utils';
 
 
@@ -214,81 +211,6 @@ export function readTransaction (readOrigin: Read) {
         }
 
     };
-
-}
-
-
-
-export function bufferCounter (read: Read) {
-
-    const chunks = [] as Buffer[];
-    const marker = [] as number[];
-
-    let flag = false;
-
-    const notEmpty = complement(isEmpty);
-    const mirror = tap(bond(chunks).push);
-    const concatChunks = () => Buffer.concat(chunks);
-    const patchChunksBy = forEach(((x) => (i: number) => chunks[i] = x)(Buffer.alloc(0)));
-    const markChunksFromBack = (offset: number) => marker.push(chunks.length - 1 - offset);
-
-
-
-    return Object.freeze({
-
-        flag (on: boolean) {
-            flag = on;
-        },
-
-        async read (size: number) {
-
-            const chunk = mirror(await read(size));
-
-            if (flag === true) {
-                markChunksFromBack(0);
-            }
-
-            return chunk;
-
-        },
-
-        pop (n: number) {
-            times(markChunksFromBack, n);
-        },
-
-        reset () {
-            chunks.length = 0;
-            marker.length = 0;
-            flag = false;
-        },
-
-        count () {
-
-            const total = concatChunks();
-            const totalBytes = total.length;
-
-            let general = total;
-            let generalBytes = totalBytes;
-
-            if (notEmpty(marker)) {
-                patchChunksBy(marker);
-
-                general = concatChunks();
-                generalBytes = general.length;
-            }
-
-            const weight = generalBytes * 3 + totalBytes;
-            const hash = blockHash(general);
-
-            return {
-                weight,
-                hash,
-                size: totalBytes,
-            };
-
-        },
-
-    });
 
 }
 
