@@ -32,7 +32,6 @@ jobs:
 
       - run: npm install
       - run: npm run test
-      - run: npm run build
 
 
 
@@ -50,6 +49,8 @@ jobs:
           version: 12.x
           node-version: 12.x
           registry-url: https://registry.npmjs.org/
+
+      - run: npm run build
 
       - run: npm publish --tag=next
         env:
