@@ -2,6 +2,8 @@ import * as R from 'ramda';
 
 import { mapIter, toHex, copy, sha256, blockHash, reverseBuffer, thunkLooping } from '../lib/utils';
 
+import { h2b } from './helpers';
+
 import blockFixtures from './fixtures/block.json';
 
 
@@ -111,7 +113,7 @@ describe('sha256', () => {
     ]))('hashing - %s', (text, hex) => {
 
         const hashed = sha256(Buffer.from(text)).toString('hex');
-        const sample = Helper.h2b(hex).toString('hex');
+        const sample = h2b(hex).toString('hex');
 
         expect(hashed).toBe(sample);
 
@@ -127,7 +129,7 @@ describe('blockHash', () => {
 
         test(`hashing ${ R.take(20, id) }`, () => {
 
-            expect(blockHash(Helper.h2b(R.take(80 * 2, hex)))).toBe(id);
+            expect(blockHash(h2b(R.take(80 * 2, hex)))).toBe(id);
 
         });
 
@@ -141,9 +143,9 @@ describe('reverseBuffer', () => {
 
     test('manually', () => {
 
-        expect(reverseBuffer(Helper.h2b('11223344'))).toEqual(Helper.h2b('44332211'))
-        expect(reverseBuffer(Helper.h2b('112233'))).toEqual(Helper.h2b('332211'))
-        expect(reverseBuffer(Helper.h2b('1122'))).toEqual(Helper.h2b('2211'))
+        expect(reverseBuffer(h2b('11223344'))).toEqual(h2b('44332211'))
+        expect(reverseBuffer(h2b('112233'))).toEqual(h2b('332211'))
+        expect(reverseBuffer(h2b('1122'))).toEqual(h2b('2211'))
 
     });
 
@@ -155,21 +157,11 @@ describe('reverseBuffer', () => {
 
         test(`reversing ${ R.take(20, id) }`, () => {
 
-            expect(reverseBuffer(Helper.h2b(id))).toEqual(Helper.h2b(hash));
+            expect(reverseBuffer(h2b(id))).toEqual(h2b(hash));
 
         });
 
     }
 
 });
-
-
-
-
-
-namespace Helper {
-
-    export const h2b = (hex: string) => Buffer.from(hex, 'hex');
-
-}
 
