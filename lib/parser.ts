@@ -218,7 +218,7 @@ export function readTransaction (readOrigin: Read) {
 
 export function parseCoinbase (transaction: Transaction) {
 
-    const { hash, inputs: [ input ], outputs: [ output ] } = transaction;
+    const { hash, inputs: [ input ], outputs } = transaction;
 
     const { txId, vOut, script } = input;
 
@@ -231,13 +231,19 @@ export function parseCoinbase (transaction: Transaction) {
     const bytes = scriptBuffer.readUInt8(0);
     const height = bytes < 1 ? 0 : scriptBuffer.readUIntLE(1, bytes);
 
+    const value = '0x' + outputs
+        .map(({ value }) => new BN(value.substr(2), 16))
+        .reduce((a, b) => a.iadd(b))
+        .toString(16)
+    ;
+
     return {
         type: 'COINBASE' as 'COINBASE',
 
         height,
+        value,
         hash,
         script,
-        output,
     };
 
 }
