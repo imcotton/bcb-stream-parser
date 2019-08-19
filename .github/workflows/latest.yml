@@ -1,0 +1,35 @@
+name: Latest
+
+
+
+
+
+on:
+  push:
+    branches:
+      - '!*'
+    tags:
+      - lv/*
+
+
+
+
+
+jobs:
+
+  tagging:
+    name: Latest
+    runs-on: ubuntu-18.04
+
+    steps:
+
+      - uses: actions/checkout@master
+
+      - uses: actions/setup-node@v1
+        with:
+          version: 12.x
+
+      - run: npm dist-tag add $(npm run -s ver) latest
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
