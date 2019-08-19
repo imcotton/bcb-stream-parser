@@ -17,8 +17,8 @@ on:
 
 jobs:
 
-  publishing:
-    name: Publish
+  checking:
+    name: Check
     runs-on: ubuntu-18.04
 
     steps:
@@ -32,6 +32,22 @@ jobs:
       - run: npm install
       - run: npm run test
       - run: npm run build
+
+
+
+  publishing:
+    name: Publish
+    runs-on: ubuntu-18.04
+    needs: checking
+
+    steps:
+
+      - uses: actions/checkout@master
+
+      - uses: actions/setup-node@v1
+        with:
+          version: 12.x
+          registry-url: https://registry.npmjs.org/
 
       - run: npm publish --tag=next
         env:
