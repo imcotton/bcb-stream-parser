@@ -45,9 +45,7 @@ describe('coinbase', () => {
         R.pluck('value') as (list: Array<{ value: number }>) => number[],
     );
 
-    const samples = R.filter(R.propEq('coinbase', true));
-
-    for (const { hex, description, raw } of samples(txFixtures.valid)) {
+    for (const { hex, description, raw } of txFixtures.valid) {
 
         test(description, async () => {
 
@@ -57,11 +55,8 @@ describe('coinbase', () => {
             const tx = await readTransaction(read)();
             const coinbase = parseCoinbase(tx);
 
-            expect(coinbase).not.toBeUndefined();
-
-            const value = sum(raw.outs);
-
             if (coinbase) {
+                const value = sum(raw.outs);
                 expect(coinbase.value.substr(2)).toEqual(value.toString(16));
             }
 
