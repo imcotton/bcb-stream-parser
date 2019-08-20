@@ -5,7 +5,7 @@ import { bufferPond } from "buffer-pond";
 
 import { h2b, h2r, toASM, reverseID } from './helpers';
 
-import { readHeader, readTransaction, parseCoinbase } from '../lib/parser';
+import { readHeader, readTransaction, parseCoinbase, reader } from '../lib/parser';
 
 import txFixtures from './fixtures/transaction.json';
 import blockFixtures from './fixtures/block.json';
@@ -122,6 +122,26 @@ describe('transaction', () => {
                 expect(Number(output.value)).toEqual(value);
 
             })
+
+        });
+
+    }
+
+});
+
+
+
+describe('reader', () => {
+
+    for (const { hex, description } of blockFixtures.valid) {
+
+        test(description, async () => {
+
+            const stream = reader(h2r(hex.padEnd(80 * 2 + 2, '0')));
+
+            for await (const { hash } of stream) {
+                expect(hash.length).toBe(64);
+            }
 
         });
 
