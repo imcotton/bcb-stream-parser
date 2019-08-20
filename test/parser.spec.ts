@@ -16,15 +16,17 @@ import blockFixtures from './fixtures/block.json';
 
 describe('readHeader', () => {
 
-    for (const { id, hex } of R.take(5, blockFixtures.valid)) {
+    for (const { id, hex } of blockFixtures.valid) {
 
         test(`reading ${ R.take(20, id) }`, async () => {
 
             const { feed, read } = bufferPond();
 
-            feed(h2b(R.take(80 * 2, hex)));
+            const headHex = R.take(80 * 2 + 2, hex);
 
-            const { hash } = await readHeader(read)(false);
+            feed(h2b(headHex));
+
+            const { hash } = await readHeader(read)(headHex.length > 80 * 2);
 
             expect(hash).toEqual(id);
 
