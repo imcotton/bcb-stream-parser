@@ -256,7 +256,7 @@ export function readHeader (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
 
-    return async function (readTxCount = true) {
+    return async function (readTxCount: boolean) {
 
         const chunk = await read(80);
         const { readUInt32LE, slice } = bond(chunk);
@@ -295,7 +295,7 @@ export type Parser = RT<typeof parser> extends AII<infer U> ? U : never;
 
 export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable, 'off'>) {
 
-    const header = await readHeader(read)();
+    const header = await readHeader(read)(true);
 
     yield { ...header } as const;
 
