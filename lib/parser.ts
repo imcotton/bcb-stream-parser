@@ -293,7 +293,6 @@ export const reader = toReadableStream(parser);
 
 export type Parser = RT<typeof parser> extends AII<infer U> ? U : never;
 
-// istanbul ignore next
 export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable, 'off'>) {
 
     const header = await readHeader(read)(true);
