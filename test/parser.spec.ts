@@ -5,7 +5,7 @@ import { bufferPond } from "buffer-pond";
 
 import { h2b, h2r, toASM, reverseID } from './helpers';
 
-import { readHeader, readTransaction, parseCoinbase, reader } from '../lib/parser';
+import { readHeader, readTransaction, parseCoinbase, reader, readCompactSize } from '../lib/parser';
 
 import txFixtures from './fixtures/transaction.json';
 import blockFixtures from './fixtures/block.json';
@@ -29,6 +29,37 @@ describe('readHeader', () => {
             const { hash } = await readHeader(read)(headHex.length > 80 * 2);
 
             expect(hash).toEqual(id);
+
+        });
+
+    }
+
+});
+
+
+
+describe('readCompactSize', () => {
+
+    const samples = [
+        [ '01', 1 ],
+        [ '7e', 126 ],
+        [ 'fd0302', 515 ],
+        [ 'fdfaff', 65530 ],
+        [ 'fe90e8e703', 65530000 ],
+        [ 'ffffffffffffff1f00', Number.MAX_SAFE_INTEGER ],
+    ] as const;
+
+    for (const [ hex, number ] of samples) {
+
+        test(hex, async () => {
+
+            const { feed, read } = bufferPond();
+
+            feed(h2b(hex));
+
+            const value = await readCompactSize(read)();
+
+            expect(value).toEqual(number);
 
         });
 
