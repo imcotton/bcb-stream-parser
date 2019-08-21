@@ -200,3 +200,35 @@ describe('transformer', () => {
 
 });
 
+
+
+describe('reader x transformer', () => {
+
+    const toStream = R.compose(
+        h2r,
+        (hex: string) => hex.padEnd(80 * 2 + 2, '0'),
+    );
+
+    for (const { hex, description } of blockFixtures.valid) {
+
+        test(description, async () => {
+
+            const foo = [];
+            const bar = [];
+
+            for await (const item of reader(toStream(hex))) {
+                foo.push(item);
+            }
+
+            for await (const item of toStream(hex).pipe(transformer())) {
+                bar.push(item);
+            }
+
+            expect(foo).toEqual(bar);
+
+        });
+
+    }
+
+});
+
