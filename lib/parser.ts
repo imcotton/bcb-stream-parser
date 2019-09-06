@@ -45,7 +45,7 @@ export function readCompactSize (read: Read) {
 
 
 
-export function readVerHex (read: Read) {
+export function readVarHex (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
 
@@ -67,7 +67,7 @@ export function readVerHex (read: Read) {
 
 export function readInput (read: Read) {
 
-    const verStrThunk = readVerHex(read);
+    const varStrThunk = readVarHex(read);
 
     return async function () {
 
@@ -76,7 +76,7 @@ export function readInput (read: Read) {
         const txId = toHex(reverseBuffer(copy(head.slice(0, 32))));
         const vOut = head.readInt32LE(32);
 
-        const script = await verStrThunk();
+        const script = await varStrThunk();
         const sequence = toHex(await read(4), '0x');
 
         return {
@@ -94,12 +94,12 @@ export function readInput (read: Read) {
 
 export function readOutput (read: Read) {
 
-    const verStrThunk = readVerHex(read);
+    const varStrThunk = readVarHex(read);
 
     return async function () {
 
         const value = '0x' + new BN(await read(8), 'le').toString(16);
-        const script = await verStrThunk();
+        const script = await varStrThunk();
 
         return {
             value,
@@ -115,8 +115,8 @@ export function readOutput (read: Read) {
 export function readWitness (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
-    const verStrThunk = readVerHex(read);
-    const loopStr = thunkLooping(async () => await verStrThunk()).array;
+    const varStrThunk = readVarHex(read);
+    const loopStr = thunkLooping(async () => await varStrThunk()).array;
 
     return async function () {
         return await loopStr(await compactSizeThunk());
