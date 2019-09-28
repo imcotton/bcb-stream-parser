@@ -115,11 +115,10 @@ export function readOutput (read: Read) {
 export function readWitness (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
-    const varStrThunk = readVarHex(read);
-    const loopStr = thunkLooping(async () => await varStrThunk()).array;
+    const loopStr = thunkLooping(readVarHex(read)).array;
 
     return async function () {
-        return await loopStr(await compactSizeThunk());
+        return loopStr(await compactSizeThunk());
     };
 
 }
