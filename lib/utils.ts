@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 
 import { complement, forEach, isEmpty, tap, times } from 'ramda';
 
-import { bond } from 'proxy-bind';
+import { mirror } from 'proxy-bind';
 
 import { Read } from 'async-readable';
 
@@ -88,13 +88,13 @@ export function reverseBuffer (buffer: Buffer) {
 
 export function bufferCounter (read: Read) {
 
-    const chunks = [] as Buffer[];
+    const [ chunks, { push } ] = mirror([] as Buffer[]);
     const marker = [] as number[];
 
     let flag = false;
 
     const notEmpty = complement(isEmpty);
-    const mirror = tap(bond(chunks).push);
+    const copy = tap(push);
     const concatChunks = () => Buffer.concat(chunks);
     const patchChunksBy = forEach(((x) => (i: number) => chunks[i] = x)(Buffer.alloc(0)));
     const markChunksFromBack = (offset: number) => marker.push(chunks.length - 1 - offset);
@@ -109,7 +109,7 @@ export function bufferCounter (read: Read) {
 
         async read (size: number) {
 
-            const chunk = mirror(await read(size));
+            const chunk = copy(await read(size));
 
             if (flag === true) {
                 markChunksFromBack(0);
