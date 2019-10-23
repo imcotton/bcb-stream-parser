@@ -4,7 +4,7 @@
 
 .editorconfig
 tsconfig.json
-jest.config.js
+jest.config.json
 rollup.config.js
 junit.xml
 
