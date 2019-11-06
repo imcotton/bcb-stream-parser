@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import { mapIter, toHex, copy, sha256, blockHash, reverseBuffer, thunkLooping } from '../lib/utils';
+import { mapIter, toHex, copy, sha256, blockHash, reverseBuffer, loopArray, loopGenerator } from '../lib/utils';
 
 import { h2b } from './helpers';
 
@@ -16,7 +16,7 @@ describe('thunkLooping', () => {
 
     test('array', async () => {
 
-        const list = await thunkLooping(thunk).array(3);
+        const list = await loopArray(thunk)(3);
 
         expect(list).toStrictEqual(R.repeat(42, 3));
 
@@ -26,7 +26,7 @@ describe('thunkLooping', () => {
 
         const spy = jest.fn();
 
-        const list = thunkLooping(thunk).generator(3);
+        const list = loopGenerator(thunk)(3);
 
         for await (const item of list) {
             spy(item);

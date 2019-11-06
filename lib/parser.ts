@@ -12,8 +12,8 @@ import { PromiseType, Optional } from 'utility-types';
 import { apply, compose, identity, head, not, thunkify } from 'ramda';
 
 import {
-    thunkLooping, mapIter, toHex, copy,
-    blockHash, reverseBuffer, bufferCounter,
+    mapIter, toHex, copy, blockHash, reverseBuffer, bufferCounter,
+    loopGenerator, loopArray,
 } from './utils';
 
 
@@ -115,7 +115,7 @@ export function readOutput (read: Read) {
 export function readWitness (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
-    const loopStr = thunkLooping(readVarHex(read)).array;
+    const loopStr = loopArray(readVarHex(read));
 
     return async function () {
         return loopStr(await compactSizeThunk());
@@ -134,9 +134,9 @@ export function readTransaction (readOrigin: Read) {
 
     const compactSizeThunk = readCompactSize(read);
 
-    const loopInput = thunkLooping(readInput(read)).array;
-    const loopOutput = thunkLooping(readOutput(read)).array;
-    const loopWitness = thunkLooping(readWitness(read)).array;
+    const loopInput = loopArray(readInput(read));
+    const loopOutput = loopArray(readOutput(read));
+    const loopWitness = loopArray(readWitness(read));
 
     return async function () {
 
@@ -300,7 +300,7 @@ export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable,
 
     const { txCount } = header;
 
-    const loopTx = thunkLooping(readTransaction(read)).generator;
+    const loopTx = loopGenerator(readTransaction(read));
 
     const indexed = mapIter(<T> (tx: T, i: number) => ({ i, tx }));
 

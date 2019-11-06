@@ -10,31 +10,33 @@ import { Read } from 'async-readable';
 
 
 
-export function thunkLooping <T> (thunk: () => Promise<T>) {
+export function loopArray <T> (thunk: () => Promise<T>) {
 
-    return Object.freeze({
+    return async function (size: number) {
 
-        async array (size: number) {
+        const list = [];
 
-            const list = [];
+        while (size--) {
+            list.push(await thunk());
+        }
 
-            while (size--) {
-                list.push(await thunk());
-            }
+        return list;
 
-            return list;
+    };
 
-        },
+}
 
-        async * generator (size: number) {
 
-            while (size--) {
-                yield thunk();
-            }
 
-        },
+export function loopGenerator <T> (thunk: () => Promise<T>) {
 
-    });
+    return async function* (size: number) {
+
+        while (size--) {
+            yield thunk();
+        }
+
+    };
 
 }
 
