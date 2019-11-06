@@ -50,7 +50,7 @@ export const log = R.tap(console.log);
 
 
 export const toASM = R.memoizeWith(R.identity,
-    R.compose(
+    R.o(
         R.ifElse(({ length }) => length > 0, script.toASM, R.always('')),
         h2b,
     ),
@@ -59,7 +59,7 @@ export const toASM = R.memoizeWith(R.identity,
 
 
 export const toAddress = R.memoizeWith(R.identity,
-    R.compose(
+    R.o(
         address.fromOutputScript,
         h2b,
     ),

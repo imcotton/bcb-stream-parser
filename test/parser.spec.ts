@@ -71,7 +71,7 @@ describe('readCompactSize', () => {
 
 describe('coinbase', () => {
 
-    const sum = R.compose(
+    const sum = R.o(
         R.sum,
         R.pluck('value') as (list: Array<{ value: number }>) => number[],
     );
@@ -204,7 +204,7 @@ describe('transformer', () => {
 
 describe('reader x transformer', () => {
 
-    const toStream = R.compose(
+    const toStream = R.o(
         h2r,
         (hex: string) => hex.padEnd(80 * 2 + 2, '0'),
     );
