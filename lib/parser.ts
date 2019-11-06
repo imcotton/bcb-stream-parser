@@ -9,7 +9,7 @@ import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
 import { PromiseType, Optional } from 'utility-types';
 
-import { apply, compose, identity, head, not, thunkify } from 'ramda';
+import { apply, compose, identity, head, not, thunkify, o } from 'ramda';
 
 import {
     mapIter, toHex, copy, blockHash, reverseBuffer, bufferCounter,
@@ -300,11 +300,12 @@ export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable,
 
     const { txCount } = header;
 
-    const loopTx = loopGenerator(readTransaction(read));
+    const loop = o(
+        mapIter(<T> (tx: T, i: number) => ({ i, tx })),
+        loopGenerator(readTransaction(read)),
+    );
 
-    const indexed = mapIter(<T> (tx: T, i: number) => ({ i, tx }));
-
-    for await (const { i, tx } of indexed(loopTx(txCount))) {
+    for await (const { i, tx } of loop(txCount)) {
 
         if (i === 0) {
             const coinbase = parseCoinbase(tx);
