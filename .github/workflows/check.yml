@@ -24,11 +24,17 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: npm install
-      - run: npm run test -- --verbose
+      - run: npm install && npm install jest-sonar-reporter
+      - run: npm run test -- --verbose --testResultsProcessor=jest-sonar-reporter
+
       - run: npm run build
 
       - run: npx codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - uses: sonarsource/sonarcloud-github-action@v1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
