@@ -24,8 +24,14 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: npm install
-      - run: npm run test -- --verbose
+      - run: npm install && npm install jest-sonar-reporter
+      - run: npm run test -- --verbose --testResultsProcessor=jest-sonar-reporter
+
+      - name: report path correction
+        run: |-
+          sed -i 's#SF:/.*/lib/#SF:/github/workspace/lib/#g' coverage/lcov.info
+          sed -i 's#/home/runner/.*/test/#/github/workspace/test/#g' test-report.xml
+
       - run: npm run build
 
       - run: npx codecov
