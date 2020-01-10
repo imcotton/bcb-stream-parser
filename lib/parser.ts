@@ -9,7 +9,7 @@ import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
 import { PromiseType, Optional } from 'utility-types';
 
-import { apply, compose, identity, head, not, thunkify, o } from 'ramda';
+import { apply, compose, identity, head, not, thunkify, o, concat } from 'ramda';
 
 import {
     mapIter, toHex, copy, blockHash, reverseBuffer, bufferCounter,
@@ -98,7 +98,7 @@ export function readOutput (read: Read) {
 
     return async function () {
 
-        const value = '0x' + new BN(await read(8), 'le').toString(16);
+        const value = concat('0x', new BN(await read(8), 'le').toString(16));
         const script = await varStrThunk();
 
         return {
@@ -230,11 +230,11 @@ export function parseCoinbase (transaction: Transaction) {
     const bytes = scriptBuffer.readUInt8(0);
     const height = bytes < 1 ? 0 : scriptBuffer.readUIntLE(1, bytes);
 
-    const value = '0x' + outputs
+    const value = concat('0x', outputs
         .map(({ value }) => new BN(value.substr(2), 16))
         .reduce((a, b) => a.iadd(b))
         .toString(16)
-    ;
+    );
 
     return {
         type: 'COINBASE' as 'COINBASE',
