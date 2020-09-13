@@ -28,7 +28,7 @@
   "dependencies": {
     "async-readable": "~0.4.2",
     "bn.js": "^5.0.0",
-    "buffer-pond": "~0.7.0",
+    "buffer-pond": "~0.8.1",
     "proxy-bind": "^1.2.1",
     "ramda": "~0.26.1"
   },
