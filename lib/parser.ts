@@ -7,7 +7,7 @@ import { bond } from 'proxy-bind';
 import { toTransform } from 'buffer-pond';
 import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
-import { PromiseType, Optional } from 'utility-types';
+import { PromiseType } from 'utility-types';
 
 import { apply, compose, identity, head, not, thunkify, o, concat } from 'ramda';
 
@@ -292,7 +292,7 @@ export const reader = toReadableStream(parser);
 
 export type Parser = RT<typeof parser> extends AII<infer U> ? U : never;
 
-export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable, 'off'>) {
+export async function* parser ({ read }: AsyncReadable) {
 
     const header = await readHeader(read)(true);
 
@@ -318,8 +318,6 @@ export async function* parser ({ read, off = () => {} }: Optional<AsyncReadable,
         yield { ...tx } as const;
 
     }
-
-    off();
 
 }
 
