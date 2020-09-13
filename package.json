@@ -19,7 +19,7 @@
     "stream"
   ],
   "author": "Cotton Hou <himcotton@gmail.com>",
-  "repository": "imcotton/bcb-stream-parser",
+  "repository": "github:imcotton/bcb-stream-parser",
   "homepage": "https://github.com/imcotton/bcb-stream-parser#readme",
   "bugs": {
     "url": "https://github.com/imcotton/bcb-stream-parser/issues"
