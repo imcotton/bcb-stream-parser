@@ -1,6 +1,6 @@
 {
   "name": "bcb-stream-parser",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Parse BitCoin-Block via NodeJS.ReadableStream",
   "main": "index.cjs",
   "module": "index.mjs",
