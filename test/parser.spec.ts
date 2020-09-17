@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 
+import { PassThrough } from 'stream';
 import { asyncReadable } from 'async-readable';
 import { bufferPond } from "buffer-pond";
 
@@ -188,7 +189,9 @@ describe('transformer', () => {
 
         test(description, async () => {
 
-            const stream = h2r(hex.padEnd(80 * 2 + 2, '0')).pipe(transformer());
+            const sink = new PassThrough({ objectMode: true });
+
+            const stream = h2r(hex.padEnd(80 * 2 + 2, '0')).pipe(transformer()).pipe(sink);
 
             for await (const { hash } of stream) {
                 expect(hash.length).toBe(64);
@@ -216,11 +219,13 @@ describe('reader x transformer', () => {
             const foo = [];
             const bar = [];
 
+            const sink = new PassThrough({ objectMode: true });
+
             for await (const item of reader(toStream(hex))) {
                 foo.push(item);
             }
 
-            for await (const item of toStream(hex).pipe(transformer())) {
+            for await (const item of toStream(hex).pipe(transformer()).pipe(sink)) {
                 bar.push(item);
             }
 
