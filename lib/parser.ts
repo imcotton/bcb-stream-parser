@@ -9,7 +9,7 @@ import { Read, toReadableStream, AsyncReadable } from 'async-readable';
 
 import { PromiseType } from 'utility-types';
 
-import { apply, compose, identity, head, not, thunkify, o, concat } from 'ramda';
+import * as R from 'ramda';
 
 import {
     mapIter, toHex, copy, blockHash, reverseBuffer, bufferCounter,
@@ -98,7 +98,7 @@ export function readOutput (read: Read) {
 
     return async function () {
 
-        const value = concat('0x', new BN(await read(8), 'le').toString(16));
+        const value = R.concat('0x', new BN(await read(8), 'le').toString(16));
         const script = await varStrThunk();
 
         return {
@@ -203,7 +203,7 @@ export function readTransaction (readOrigin: Read) {
                 ...base,
 
                 hasWitness: false as false,
-                inputs: mapInputs(identity),
+                inputs: mapInputs(R.identity),
             };
 
         }
@@ -220,13 +220,13 @@ export function parseCoinbase (transaction: Transaction) {
 
     const { txId, vOut, script } = input;
 
-    if (not(/^0{64}$/.test(txId) && vOut === -1)) {
+    if (R.not(/^0{64}$/.test(txId) && vOut === -1)) {
         return;
     }
 
     const height = readBlockHeight(script);
 
-    const value = concat('0x', outputs
+    const value = R.concat('0x', outputs
         .map(({ value }) => new BN(value.substr(2), 16))
         .reduce((a, b) => a.iadd(b))
         .toString(16)
@@ -260,13 +260,13 @@ export function readHeader (read: Read) {
 
         const p = pointer(0);
 
-        const bytesHex = compose(
+        const bytesHex = R.compose(
             toHex,
             reverseBuffer,
-            apply(subarray as typeof chunk.slice),
+            R.apply(subarray as typeof chunk.slice),
             p,
         );
-        const uint32LE = thunkify(compose(readUInt32LE, head, p))(4);
+        const uint32LE = R.thunkify(R.compose(readUInt32LE, R.head, p))(4);
 
         return {
             type: 'HEADER' as 'HEADER',
@@ -301,7 +301,7 @@ export async function* parser ({ read }: AsyncReadable) {
 
     const { txCount } = header;
 
-    const loop = o(
+    const loop = R.o(
         mapIter(<T> (tx: T, i: number) => ({ i, tx })),
         loopGenerator(readTransaction(read)),
     );

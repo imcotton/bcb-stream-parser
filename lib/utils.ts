@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-import { complement, forEach, isEmpty, tap, times } from 'ramda';
+import * as R from 'ramda';
 
 import { mirror } from 'proxy-bind';
 
@@ -106,10 +106,10 @@ export function bufferCounter (read: Read) {
 
     let flag = false;
 
-    const notEmpty = complement(isEmpty);
-    const copy = tap(push);
+    const notEmpty = R.complement(R.isEmpty);
+    const copy = R.tap(push);
     const concatChunks = () => Buffer.concat(chunks);
-    const patchChunksBy = forEach(((x) => (i: number) => chunks[i] = x)(Buffer.alloc(0)));
+    const patchChunksBy = R.forEach(((x) => (i: number) => chunks[i] = x)(Buffer.alloc(0)));
     const markChunksFromBack = (offset: number) => marker.push(chunks.length - 1 - offset);
 
 
@@ -133,7 +133,7 @@ export function bufferCounter (read: Read) {
         },
 
         pop (n: number) {
-            times(markChunksFromBack, n);
+            R.times(markChunksFromBack, n);
         },
 
         reset () {
