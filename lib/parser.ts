@@ -13,7 +13,7 @@ import { apply, compose, identity, head, not, thunkify, o, concat } from 'ramda'
 
 import {
     mapIter, toHex, copy, blockHash, reverseBuffer, bufferCounter,
-    loopGenerator, loopArray,
+    loopGenerator, loopArray, readBlockHeight,
 } from './utils';
 
 
@@ -224,10 +224,7 @@ export function parseCoinbase (transaction: Transaction) {
         return;
     }
 
-    const scriptBuffer = Buffer.from(script, 'hex');
-
-    const bytes = scriptBuffer.readUInt8(0);
-    const height = bytes < 1 ? 0 : scriptBuffer.readUIntLE(1, bytes);
+    const height = readBlockHeight(script);
 
     const value = concat('0x', outputs
         .map(({ value }) => new BN(value.substr(2), 16))

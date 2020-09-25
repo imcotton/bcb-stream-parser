@@ -82,6 +82,17 @@ export function blockHash (content: Buffer) {
 
 
 
+export function readBlockHeight (script: string) {
+
+    const scriptBuffer = Buffer.from(script, 'hex');
+    const bytes = scriptBuffer.readUInt8(0);
+
+    return bytes < 1 ? 0 : scriptBuffer.readUIntLE(1, bytes);
+
+}
+
+
+
 export function reverseBuffer (buffer: Buffer) {
     return buffer.reverse() as Buffer;
 }

@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import { mapIter, toHex, copy, sha256, blockHash, reverseBuffer, loopArray, loopGenerator } from '../lib/utils';
+import { mapIter, toHex, copy, sha256, blockHash, reverseBuffer, loopArray, loopGenerator, readBlockHeight } from '../lib/utils';
 
 import { h2b } from './helpers';
 
@@ -134,6 +134,26 @@ describe('blockHash', () => {
         });
 
     }
+
+});
+
+
+
+describe('readBlockHeight', () => {
+
+    test.each([
+
+        [ '00', 0 ],
+
+        [ '037f9a07', 498_303 ],
+        [ '037e9a07', 498_302 ],
+        [ '037d9a07', 498_301 ],
+
+    ])('%p - %d', (hex, height) => {
+
+        expect(readBlockHeight(hex)).toBe(height);
+
+    });
 
 });
 
