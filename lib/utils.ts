@@ -107,7 +107,7 @@ export function bufferCounter (read: Read) {
     let flag = false;
 
     const notEmpty = R.complement(R.isEmpty);
-    const copy = R.tap(push);
+    const tee = R.tap(push);
     const concatChunks = () => Buffer.concat(chunks);
     const patchChunksBy = R.forEach(((x) => (i: number) => chunks[i] = x)(Buffer.alloc(0)));
     const markChunksFromBack = (offset: number) => marker.push(chunks.length - 1 - offset);
@@ -122,7 +122,7 @@ export function bufferCounter (read: Read) {
 
         async read (size: number) {
 
-            const chunk = copy(await read(size));
+            const chunk = tee(await read(size));
 
             if (flag === true) {
                 markChunksFromBack(0);

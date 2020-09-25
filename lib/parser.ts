@@ -165,7 +165,7 @@ export function readTransaction (readOrigin: Read) {
             )(await loopWitness(inputLen));
 
             inputsWithWitness = mapInputs(
-                (base, index) => ({ ...base, witness: by(index) }),
+                (rest, index) => ({ ...rest, witness: by(index) }),
             );
 
             acc.flag(false);
@@ -224,7 +224,7 @@ export function parseCoinbase (transaction: Transaction) {
     const height = u.readBlockHeight(script);
 
     const value = R.concat('0x', outputs
-        .map(({ value }) => new BN(value.substr(2), 16))
+        .map(({ value: str }) => new BN(str.substr(2), 16))
         .reduce((a, b) => a.iadd(b))
         .toString(16)
     );
