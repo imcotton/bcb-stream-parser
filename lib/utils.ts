@@ -103,7 +103,7 @@ export function bufferCounter (read: Read) {
 
 
 
-    return Object.freeze({
+    return {
 
         flag (on: boolean) {
             flag = on;
@@ -157,7 +157,7 @@ export function bufferCounter (read: Read) {
 
         },
 
-    });
+    };
 
 }
 
