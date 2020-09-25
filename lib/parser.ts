@@ -218,7 +218,7 @@ export function parseCoinbase (transaction: Transaction) {
     const { txId, vOut, script } = input;
 
     if (R.not(/^0{64}$/.test(txId) && vOut === -1)) {
-        return;
+        return void 0;
     }
 
     const height = u.readBlockHeight(script);
