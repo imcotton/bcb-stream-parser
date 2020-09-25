@@ -2,7 +2,7 @@
 
 import BN from 'bn.js';
 
-import { bond } from 'proxy-bind';
+import { bond, mirror } from 'proxy-bind';
 
 import { toTransform } from 'buffer-pond';
 import { Read, toReadableStream, AsyncReadable } from 'async-readable';
@@ -129,8 +129,7 @@ export type Transaction = PT<RT<RT<typeof readTransaction>>>;
 
 export function readTransaction (readOrigin: Read) {
 
-    const acc = bufferCounter(readOrigin);
-    const { read } = acc;
+    const [ acc, { read } ] = mirror(bufferCounter(readOrigin));
 
     const compactSizeThunk = readCompactSize(read);
 
