@@ -73,7 +73,7 @@ export function readInput (read: Read) {
 
         const head = await read(36);
 
-        const txId = toHex(reverseBuffer(copy(head.slice(0, 32))));
+        const txId = toHex(reverseBuffer(copy(head.subarray(0, 32) as Buffer)));
         const vOut = head.readInt32LE(32);
 
         const script = await varStrThunk();
@@ -257,13 +257,18 @@ export function readHeader (read: Read) {
     return async function (readTxCount: boolean) {
 
         const chunk = await read(80);
-        const { readUInt32LE, slice } = bond(chunk);
+        const { readUInt32LE, subarray } = bond(chunk);
 
         const hash = blockHash(chunk);
 
         const p = pointer(0);
 
-        const bytesHex = compose(toHex, reverseBuffer, apply(slice), p);
+        const bytesHex = compose(
+            toHex,
+            reverseBuffer,
+            apply(subarray as typeof chunk.slice),
+            p,
+        );
         const uint32LE = thunkify(compose(readUInt32LE, head, p))(4);
 
         return {
