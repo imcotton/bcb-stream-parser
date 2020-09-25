@@ -11,10 +11,7 @@ import { PromiseType } from 'utility-types';
 
 import * as R from 'ramda';
 
-import {
-    mapIter, toHex, copy, blockHash, reverseBuffer, bufferCounter,
-    loopGenerator, loopArray, readBlockHeight,
-} from './utils';
+import * as u from './utils';
 
 
 
@@ -57,7 +54,7 @@ export function readVarHex (read: Read) {
             return '';
         }
 
-        return toHex(await read(len));
+        return u.toHex(await read(len));
 
     };
 
@@ -73,11 +70,11 @@ export function readInput (read: Read) {
 
         const head = await read(36);
 
-        const txId = toHex(reverseBuffer(copy(head.subarray(0, 32) as Buffer)));
+        const txId = u.toHex(u.reverseBuffer(u.copy(head.subarray(0, 32) as Buffer)));
         const vOut = head.readInt32LE(32);
 
         const script = await varStrThunk();
-        const sequence = toHex(await read(4), '0x');
+        const sequence = u.toHex(await read(4), '0x');
 
         return {
             txId,
@@ -115,7 +112,7 @@ export function readOutput (read: Read) {
 export function readWitness (read: Read) {
 
     const compactSizeThunk = readCompactSize(read);
-    const loopStr = loopArray(readVarHex(read));
+    const loopStr = u.loopArray(readVarHex(read));
 
     return async function () {
         return loopStr(await compactSizeThunk());
@@ -129,13 +126,13 @@ export type Transaction = PT<RT<RT<typeof readTransaction>>>;
 
 export function readTransaction (readOrigin: Read) {
 
-    const [ acc, { read } ] = mirror(bufferCounter(readOrigin));
+    const [ acc, { read } ] = mirror(u.bufferCounter(readOrigin));
 
     const compactSizeThunk = readCompactSize(read);
 
-    const loopInput = loopArray(readInput(read));
-    const loopOutput = loopArray(readOutput(read));
-    const loopWitness = loopArray(readWitness(read));
+    const loopInput = u.loopArray(readInput(read));
+    const loopOutput = u.loopArray(readOutput(read));
+    const loopWitness = u.loopArray(readWitness(read));
 
     return async function () {
 
@@ -174,7 +171,7 @@ export function readTransaction (readOrigin: Read) {
             acc.flag(false);
         }
 
-        const lockTime = toHex(await read(4), '0x');
+        const lockTime = u.toHex(await read(4), '0x');
 
         const base = {
             type: 'TX' as 'TX',
@@ -224,7 +221,7 @@ export function parseCoinbase (transaction: Transaction) {
         return;
     }
 
-    const height = readBlockHeight(script);
+    const height = u.readBlockHeight(script);
 
     const value = R.concat('0x', outputs
         .map(({ value }) => new BN(value.substr(2), 16))
@@ -256,13 +253,13 @@ export function readHeader (read: Read) {
         const chunk = await read(80);
         const { readUInt32LE, subarray } = bond(chunk);
 
-        const hash = blockHash(chunk);
+        const hash = u.blockHash(chunk);
 
         const p = pointer(0);
 
         const bytesHex = R.compose(
-            toHex,
-            reverseBuffer,
+            u.toHex,
+            u.reverseBuffer,
             R.apply(subarray as typeof chunk.slice),
             p,
         );
@@ -302,8 +299,8 @@ export async function* parser ({ read }: AsyncReadable) {
     const { txCount } = header;
 
     const loop = R.o(
-        mapIter(<T> (tx: T, i: number) => ({ i, tx })),
-        loopGenerator(readTransaction(read)),
+        u.mapIter(<T> (tx: T, i: number) => ({ i, tx })),
+        u.loopGenerator(readTransaction(read)),
     );
 
     for await (const { i, tx } of loop(txCount)) {
