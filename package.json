@@ -35,7 +35,7 @@
     "@types/bn.js": "^4.11.6",
     "@types/jest": "^26.0.14",
     "@types/node": "^10.17.34",
-    "@types/ramda": "~0.27.17",
+    "@types/ramda": "~0.27.37",
     "bitcoinjs-lib": "^5.2.0",
     "jest": "^26.4.2",
     "jest-junit": "^11.1.0",
